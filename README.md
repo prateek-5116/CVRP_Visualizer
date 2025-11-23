@@ -1,6 +1,6 @@
 # CVRP Metaheuristic Visualizer
 
-A high-performance web application to visualize and compare hybrid metaheuristic algorithms solving the Capacitated Vehicle Routing Problem (CVRP).
+web application to visualize and compare hybrid metaheuristic algorithms solving the Capacitated Vehicle Routing Problem (CVRP).
 
 ## 📋 Prerequisites & Versions
 
@@ -21,7 +21,7 @@ Ensure your environment meets the following requirements before running:
 
 1.  **Clone the repository**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/prateek-5116/CVRP_Visualizer.git
     cd cvrp-visualizer
     ```
 
