@@ -14,6 +14,8 @@ const Controls = ({
   animationState,
   algorithmType,
   algorithmState,
+  animationSpeed, // Receive new prop
+  onSpeedChange, // Receive new prop
 }) => {
   const isRunning = animationState === 'playing';
   const isDone = algorithmState === 'done';
@@ -107,6 +109,30 @@ const Controls = ({
           </button>
         )}
       </div>
+      
+      {/* Re-add the Speed Controller UI */}
+      {isHybridGreedy && (
+        <div>
+          <label htmlFor="speed" className="block text-sm font-medium text-gray-300 mb-2">
+            Animation Speed
+          </label>
+          <div className="flex items-center space-x-3">
+            <span className="text-xs text-gray-400">Slow</span>
+            <input
+              id="speed"
+              type="range"
+              min="50"
+              max="1000"
+              step="50"
+              value={1050 - animationSpeed} // Invert slider
+              onChange={(e) => onSpeedChange(1050 - parseInt(e.target.value, 10))}
+              disabled={isRunning}
+              className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer range-sm"
+            />
+            <span className="text-xs text-gray-400">Fast</span>
+          </div>
+        </div>
+      )}
 
       <button
         onClick={onRunComparison}
@@ -121,3 +147,4 @@ const Controls = ({
 };
 
 export default Controls;
+

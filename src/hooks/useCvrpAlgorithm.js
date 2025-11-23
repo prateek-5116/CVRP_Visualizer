@@ -27,6 +27,7 @@ const getInitialState = (datasetName) => {
     algorithmState: 'idle', 
     algorithmType: ALGORITHM_TYPES.GREEDY_HYBRID,
     animationState: 'paused',
+    animationSpeed: 500, // Re-add animationSpeed
     logMessages: [`Selected dataset: ${datasetName}. Select an algorithm and run.`],
     totalDistance: 0,
     
@@ -95,19 +96,18 @@ export const useCvrpAlgorithm = (initialDatasetName) => {
     }
   }, [state]);
 
-  const fixedAnimationSpeed = 500; 
-
+  // Use state.animationSpeed instead of a fixed value
   useEffect(() => {
     const isHybridGreedy = state.algorithmType === ALGORITHM_TYPES.GREEDY_HYBRID;
     
     if (state.animationState === 'playing' && state.algorithmState !== 'done' && isHybridGreedy) {
       const timer = setTimeout(() => {
         runStep();
-      }, fixedAnimationSpeed);
+      }, state.animationSpeed); // Use dynamic speed
       
       return () => clearTimeout(timer);
     }
-  }, [state.animationState, state.algorithmState, state.algorithmType, runStep]);
+  }, [state.animationState, state.algorithmState, state.algorithmType, state.animationSpeed, runStep]); // Add animationSpeed to dependencies
 
 
   const handleRunComparison = () => {
@@ -246,6 +246,10 @@ export const useCvrpAlgorithm = (initialDatasetName) => {
     setState(getInitialState(datasetName));
   };
   
+  // Re-add the speed change handler
+  const handleSpeedChange = (speed) => {
+    setState(s => ({ ...s, animationSpeed: speed }));
+  };
 
   return {
     state,
@@ -255,6 +259,8 @@ export const useCvrpAlgorithm = (initialDatasetName) => {
     handleReset,
     handleDatasetChange,
     handleAlgorithmChange,
-    handleRunComparison
+    handleRunComparison,
+    handleSpeedChange // Expose the handler
   };
 };
+

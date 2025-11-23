@@ -18,7 +18,8 @@ export default function App() {
     handleReset,
     handleDatasetChange,
     handleAlgorithmChange,
-    handleRunComparison
+    handleRunComparison,
+    handleSpeedChange // Get handler from hook
   } = useCvrpAlgorithm(initialDatasetKey);
 
   const {
@@ -32,6 +33,7 @@ export default function App() {
     algorithmState,
     algorithmType,
     comparisonResults,
+    animationSpeed // Get speed from state
   } = state;
 
   const allNodes = useMemo(() => [depot, ...customerNodes], [depot, customerNodes]);
@@ -42,7 +44,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-gray-900 text-gray-100 font-sans">
-      {/* Main visualization panel remains flexible */}
       <main className="flex-1 flex flex-col p-4 md:p-8">
         <h1 className="text-3xl font-bold text-white mb-6 text-center">
           CVRP Algorithm Visualizer & Comparator
@@ -57,21 +58,25 @@ export default function App() {
         </div>
       </main>
 
-      {/* Sidebar: Wider, flex-col on mobile, flex-row on desktop */}
-      <aside className="w-full md:w-[700px] lg:w-[800px] bg-gray-800 p-6 shadow-2xl flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+      {/* Sidebar: Changed to horizontal layout on medium screens and up */}
+      <aside className="w-full md:w-auto md:flex-1 flex flex-col md:flex-row bg-gray-800 shadow-2xl">
         
-        {/* Column 1: Log (Appears at bottom on mobile, left on desktop) */}
-        <div className="bg-gray-700/50 p-5 rounded-xl shadow-inner flex-1 flex flex-col min-h-[200px] md:w-1/2 order-2 md:order-1">
-          <div className="flex items-center space-x-3 mb-4">
+        {/* Left Panel: Step-by-Step Log (Takes 1/2 width on desktop) */}
+        <div className="flex-1 p-6 flex flex-col min-h-[200px] md:w-1/2">
+          <div className="flex items-center space-x-3 mb-4 flex-shrink-0">
             <List className="h-6 w-6 text-yellow-400" />
             <h2 className="text-xl font-semibold text-white">Step-by-Step Log</h2>
           </div>
-          <Log messages={logMessages} />
+          {/* Pass animationState and algorithmState to Log */}
+          <Log
+            messages={logMessages}
+            animationState={animationState}
+            algorithmState={algorithmState}
+          />
         </div>
 
-        {/* Column 2: Controls & Summary (Appears at top on mobile, right on desktop) */}
-        <div className="flex flex-col md:w-1/2 space-y-6 order-1 md:order-2">
-          {/* Controls Section */}
+        {/* Right Panel: Controls & Summary (Takes 1/2 width on desktop) */}
+        <div className="flex-1 p-6 space-y-6 overflow-y-auto md:w-1/2">
           <div className="bg-gray-700/50 p-5 rounded-xl shadow-inner flex-shrink-0">
             <div className="flex items-center space-x-3 mb-4">
               <Sliders className="h-6 w-6 text-blue-400" />
@@ -89,19 +94,23 @@ export default function App() {
               animationState={animationState}
               algorithmType={algorithmType}
               algorithmState={algorithmState}
+              animationSpeed={animationSpeed} 
+              onSpeedChange={handleSpeedChange} 
             />
           </div>
           
-          {/* Summary Section */}
           <div className="bg-gray-700/50 p-5 rounded-xl shadow-inner flex-shrink-0">
             <div className="flex items-center space-x-3 mb-4">
               <Package className="h-6 w-6 text-green-400" />
               <h2 className="text-xl font-semibold text-white">Optimization Results</h2>
             </div>
+            {/* Pass animationState and algorithmState to Summary */}
             <Summary
               vehicles={vehicles}
               totalDistance={displayTotalDistance}
               comparisonResults={comparisonResults}
+              animationState={animationState}
+              algorithmState={algorithmState}
             />
           </div>
         </div>

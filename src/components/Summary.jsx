@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BarChart2 } from 'lucide-react';
 import { calculateRouteDistance } from '../algorithms/geometry';
 import { COMPARISON_COLORS } from '../constants/algorithms';
 
-const Summary = ({ vehicles, totalDistance, comparisonResults }) => {
+// Accept animationState and algorithmState as props
+const Summary = ({ vehicles, totalDistance, comparisonResults, animationState, algorithmState }) => {
   const hasComparison = comparisonResults && comparisonResults.length > 0;
+  
+  // Ref for the route details container
+  const routeDetailsContainerRef = React.useRef(null);
   
   const validResults = comparisonResults.filter(r => r.distance !== Infinity);
   const minDistance = validResults.length > 0 
@@ -14,6 +18,18 @@ const Summary = ({ vehicles, totalDistance, comparisonResults }) => {
     ? validResults.reduce((max, res) => Math.max(max, res.distance), 0) 
     : 1;
   const range = maxDistance - minDistance;
+
+  // useEffect to scroll the route details container
+  useEffect(() => {
+    // Check if the visualizer is actively playing
+    const isRunning = animationState === 'playing';
+
+    if (isRunning && routeDetailsContainerRef.current) {
+      // Scroll the container to its bottom
+      const container = routeDetailsContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [vehicles, animationState]); // Trigger when vehicles update (new route) or state changes
   
   return (
     <div className="space-y-4">
@@ -37,7 +53,11 @@ const Summary = ({ vehicles, totalDistance, comparisonResults }) => {
             </span>
           </div>
 
-          <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
+          {/* Add ref to this scrollable container */}
+          <div 
+            ref={routeDetailsContainerRef} 
+            className="space-y-3 max-h-40 overflow-y-auto pr-2"
+          >
             <h4 className='text-sm font-medium text-gray-400 mt-4'>Current Route Details:</h4>
             {vehicles.map(v => (
               <div key={v.id} className="bg-gray-700 p-3 rounded-lg border-l-4" style={{ borderColor: v.color }}>
@@ -115,3 +135,4 @@ const Summary = ({ vehicles, totalDistance, comparisonResults }) => {
 };
 
 export default Summary;
+
